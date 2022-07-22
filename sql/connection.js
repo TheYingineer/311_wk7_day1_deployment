@@ -1,24 +1,17 @@
+require('dotenv').config()
 const mysql = require('mysql')
 
 class Connection {
   constructor() {
     if (!this.pool) {
       console.log('creating mysql connection...')
-
-      const config = {
+      this.pool = mysql.createPool({
         connectionLimit: 100,
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'admin'
-      }
-
-      if (process.env.NODE_ENV === 'production' && process.env.CLOUD_INSTANCE) {
-        console.log(`connect socket: ${process.env.CLOUD_INSTANCE}`)
-        config.socketPath = `/cloudsql/${process.env.CLOUD_INSTANCE}`
-      }
-
-      this.pool = mysql.createPool(config)
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DEFAULT_SCHEMA
+      })
 
       return this.pool
     }
